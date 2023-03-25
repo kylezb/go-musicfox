@@ -12,7 +12,7 @@ import (
 	"github.com/go-musicfox/go-musicfox/utils"
 
 	"github.com/anhoder/bubbles/textinput"
-	tea "github.com/anhoder/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-runewidth"
 	"github.com/muesli/termenv"
 )
@@ -110,8 +110,10 @@ func (main *MainUIModel) update(message tea.Msg, m *NeteaseModel) (tea.Model, te
 	switch msg := message.(type) {
 	case tea.KeyMsg:
 		return main.keyMsgHandle(msg, m)
-	case tea.ClearScreenMsg:
-		return m, tickMainUI(time.Nanosecond)
+	case tea.MouseMsg:
+		return main.mouseMsgHandle(msg, m)
+	// case tea.ClearScreenMsg:
+	// 	return m, tickMainUI(time.Nanosecond)
 	case tickMainUIMsg:
 		return m, nil
 	case tea.WindowSizeMsg:
@@ -485,12 +487,12 @@ func (main *MainUIModel) keyMsgHandle(msg tea.KeyMsg, m *NeteaseModel) (tea.Mode
 			m.searchInput.Blur()
 			m.searchInput.Reset()
 			return m, func() tea.Msg {
-				return tea.ClearScreenMsg{}
+				return tea.ClearScreen()
 			}
 		case "enter":
 			searchMenuHandle(m)
 			return m, func() tea.Msg {
-				return tea.ClearScreenMsg{}
+				return tea.ClearScreen()
 			}
 		}
 
@@ -607,8 +609,35 @@ func (main *MainUIModel) keyMsgHandle(msg tea.KeyMsg, m *NeteaseModel) (tea.Mode
 	case "r", "R":
 		// rerender
 		return m, func() tea.Msg {
-			return tea.ClearScreenMsg{}
+			return tea.ClearScreen()
 		}
+	}
+
+	return m, tickMainUI(time.Nanosecond)
+}
+
+// mouse handle
+func (main *MainUIModel) mouseMsgHandle(msg tea.MouseMsg, m *NeteaseModel) (tea.Model, tea.Cmd) {
+	if !m.isListeningKey {
+		return m, nil
+	}
+	switch msg.Type {
+	case tea.MouseLeft:
+		x := msg.X
+		y := msg.Y
+		w := len(m.player.progressRamp)
+		if y+1 == m.WindowHeight && x+1 <= len(m.player.progressRamp) {
+			allDuration := int(m.player.CurMusic().Duration.Seconds())
+			if allDuration == 0 {
+				return m, nil
+			}
+			duration := float64(x) * m.player.CurMusic().Duration.Seconds() / float64(w)
+			m.player.Seek(time.Second * time.Duration(duration))
+		}
+	case tea.MouseWheelDown:
+		m.player.DownVolume()
+	case tea.MouseWheelUp:
+		m.player.UpVolume()
 	}
 
 	return m, tickMainUI(time.Nanosecond)

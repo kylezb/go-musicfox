@@ -15,9 +15,9 @@ import (
 	"github.com/go-musicfox/go-musicfox/pkg/structs"
 	"github.com/go-musicfox/go-musicfox/utils"
 
-	tea "github.com/anhoder/bubbletea"
 	"github.com/anhoder/netease-music/service"
 	"github.com/anhoder/netease-music/util"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-runewidth"
 	"github.com/telanflow/cookiejar"
 )
@@ -275,7 +275,7 @@ func (m *NeteaseModel) BindProgram(program *tea.Program) {
 
 func (m *NeteaseModel) Rerender() {
 	if m.program != nil {
-		m.program.Rerender(m.View())
+		m.program.Send(tea.ClearScreen)
 	}
 }
 

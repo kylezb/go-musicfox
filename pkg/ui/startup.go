@@ -11,7 +11,7 @@ import (
 	"github.com/go-musicfox/go-musicfox/pkg/constants"
 	"github.com/go-musicfox/go-musicfox/utils"
 
-	tea "github.com/anhoder/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fogleman/ease"
 	"github.com/muesli/termenv"
 )
@@ -54,8 +54,8 @@ func (s *StartupModel) update(msg tea.Msg, m *NeteaseModel) (tea.Model, tea.Cmd)
 		}
 		return m, tickStartup(constants.StartupTickDuration)
 
-	case tea.ClearScreenMsg:
-		return m, tickStartup(time.Nanosecond)
+	// case tea.ClearScreenMsg:
+	// 	return m, tickStartup(time.Nanosecond)
 	}
 
 	return m, nil

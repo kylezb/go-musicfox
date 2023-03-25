@@ -10,8 +10,8 @@ import (
 	"github.com/go-musicfox/go-musicfox/utils"
 
 	"github.com/anhoder/bubbles/textinput"
-	tea "github.com/anhoder/bubbletea"
 	"github.com/anhoder/netease-music/service"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-runewidth"
 	"github.com/muesli/termenv"
 )

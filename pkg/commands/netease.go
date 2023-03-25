@@ -10,7 +10,7 @@ import (
 	"github.com/go-musicfox/go-musicfox/pkg/ui"
 	"github.com/go-musicfox/go-musicfox/utils"
 
-	tea "github.com/anhoder/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/gookit/gcli/v2"
 )
 
@@ -33,11 +33,12 @@ func runPlayer(_ *gcli.Command, _ []string) error {
 
 	http.DefaultClient.Timeout = constants.AppHttpTimeout
 	neteaseModel := ui.NewNeteaseModel(configs.ConfigRegistry.StartupLoadingDuration)
-	program := tea.NewProgram(neteaseModel)
-	neteaseModel.BindProgram(program)
+	// program := tea.NewProgram(neteaseModel, tea.WithMouseAllMotion())
+	program := tea.NewProgram(neteaseModel, tea.WithMouseCellMotion())
 	if configs.ConfigRegistry.MainAltScreen {
-		program.EnterAltScreen()
-		defer program.ExitAltScreen()
+		program = tea.NewProgram(neteaseModel, tea.WithMouseCellMotion(), tea.WithAltScreen())
 	}
-	return program.Start()
+	neteaseModel.BindProgram(program)
+	_, err := program.Run()
+	return err
 }
