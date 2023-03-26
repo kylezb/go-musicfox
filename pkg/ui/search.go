@@ -219,7 +219,9 @@ func (s *SearchModel) view(m *NeteaseModel) string {
 		menuTitle.Subtitle = typeMenu.Title
 	}
 	builder.WriteString(m.menuTitleView(m, &top, menuTitle))
-	builder.WriteString("\n\n\n")
+	emptyRow := strings.Repeat(" ", m.WindowWidth) + "\n"
+	builder.WriteString(strings.Repeat(emptyRow, 3))
+	// builder.WriteString("\n\n\n")
 	top += 2
 
 	inputs := []textinput.Model{
@@ -246,27 +248,27 @@ func (s *SearchModel) view(m *NeteaseModel) string {
 		top++
 
 		if i < len(inputs)-1 {
-			builder.WriteString("\n\n")
+			builder.WriteString(strings.Repeat(emptyRow, 2))
 			top++
 		}
 	}
 
-	builder.WriteString("\n\n")
+	builder.WriteString(strings.Repeat(emptyRow, 2))
 	top++
 	if m.menuStartColumn > 0 {
 		builder.WriteString(strings.Repeat(" ", m.menuStartColumn))
 	}
 	builder.WriteString(m.searchModel.tips)
-	builder.WriteString("\n\n")
+	builder.WriteString(strings.Repeat(emptyRow, 2))
 	top++
 	if m.menuStartColumn > 0 {
 		builder.WriteString(strings.Repeat(" ", m.menuStartColumn))
 	}
 	builder.WriteString(m.searchModel.submitButton)
-	builder.WriteString("\n")
+	builder.WriteString(strings.Repeat(emptyRow, 1))
 
 	if m.WindowHeight > top+3 {
-		builder.WriteString(strings.Repeat("\n", m.WindowHeight-top-3))
+		builder.WriteString(strings.Repeat(emptyRow, m.WindowHeight-top-3))
 	}
 
 	return builder.String()

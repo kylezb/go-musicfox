@@ -279,7 +279,9 @@ func loginView(m *NeteaseModel) string {
 
 	// menu title
 	builder.WriteString(m.menuTitleView(m, &top, &MenuItem{Title: "用户登录", Subtitle: "手机号或邮箱"}))
-	builder.WriteString("\n\n\n")
+	emptyRow := strings.Repeat(" ",m.WindowWidth)+"\n"
+	builder.WriteString(strings.Repeat(emptyRow,3))
+	// builder.WriteString("\n\n\n")
 	top += 2
 
 	inputs := []textinput.Model{
@@ -307,18 +309,18 @@ func loginView(m *NeteaseModel) string {
 		top++
 
 		if i < len(inputs)-1 {
-			builder.WriteString("\n\n")
+			builder.WriteString(strings.Repeat(emptyRow,2))
 			top++
 		}
 	}
 
-	builder.WriteString("\n\n")
+	builder.WriteString(strings.Repeat(emptyRow,2))
 	top++
 	if m.menuStartColumn > 0 {
 		builder.WriteString(strings.Repeat(" ", m.menuStartColumn))
 	}
 	builder.WriteString(m.loginModel.tips)
-	builder.WriteString("\n\n")
+	builder.WriteString(strings.Repeat(emptyRow,2))
 	top++
 	if m.menuStartColumn > 0 {
 		builder.WriteString(strings.Repeat(" ", m.menuStartColumn))
@@ -326,10 +328,10 @@ func loginView(m *NeteaseModel) string {
 	builder.WriteString(m.loginModel.submitButton)
 	builder.WriteString("    ")
 	builder.WriteString(m.loginModel.qrLoginButton)
-	builder.WriteString("\n")
+	builder.WriteString(strings.Repeat(emptyRow,1))
 
 	if m.WindowHeight > top+3 {
-		builder.WriteString(strings.Repeat("\n", m.WindowHeight-top-3))
+		builder.WriteString(strings.Repeat(emptyRow, m.WindowHeight-top-3))
 	}
 
 	return builder.String()

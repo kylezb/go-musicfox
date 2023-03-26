@@ -302,7 +302,8 @@ func (main *MainUIModel) menuListView(m *NeteaseModel, top *int) string {
 		if m.WindowWidth-m.menuStartColumn > 0 {
 			menuListBuilder.WriteString(strings.Repeat(" ", m.WindowWidth-m.menuStartColumn))
 		}
-		menuListBuilder.WriteString(strings.Repeat("\n", maxLines-lines))
+		emptyRow := strings.Repeat(" ",m.WindowWidth)+"\n"
+		menuListBuilder.WriteString(strings.Repeat(emptyRow, maxLines-lines))
 	}
 
 	*top = m.menuBottomRow
