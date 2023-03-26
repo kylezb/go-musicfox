@@ -140,8 +140,21 @@ func (p *beepPlayer) listen() {
 				Duration:       8760 * time.Hour,
 				TickerInternal: 200 * time.Millisecond,
 				OnRun:          func(started bool) {},
-				OnPaused:       func() {},
-				OnDone:         func(stopped bool) {},
+				OnPaused: func() {
+					// 暂停播放仍然更新界面
+					ticker := time.NewTicker(time.Millisecond * 200)
+					for {
+						select {
+						case <-ticker.C:
+							p.timeChan <- p.timer.Passed()
+							if p.state != Paused {
+								ticker.Stop()
+								return
+							}
+						}
+					}
+				},
+				OnDone: func(stopped bool) {},
 				OnTick: func() {
 					select {
 					case p.timeChan <- p.timer.Passed():
@@ -215,7 +228,13 @@ func (p *beepPlayer) Seek(duration time.Duration) {
 			}
 		}
 		if p.timer != nil {
+
 			p.timer.SetPassed(duration)
+			if p.state == Paused{
+				// go p.timer.Run()
+				// p.timer.Pause()
+			}
+
 		}
 		speaker.Unlock()
 	}
