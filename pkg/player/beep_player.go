@@ -114,7 +114,15 @@ func (p *beepPlayer) listen() {
 			go func(ctx context.Context, cacheWFile *os.File, read io.ReadCloser) {
 				defer utils.Recover(false)
 				_, _ = utils.CopyClose(ctx, cacheWFile, read)
-				p.curStreamer, p.curFormat, _ = DecodeSong(p.curMusic.Type, p.cacheReader)
+				// FIXME: FLAC格式重载报错 err: flac: flac.parseStreamInfo:invalid FLAC signature; expected "fLaC"
+				// 同时FLAC格式（MP3 FLAC之外格式未测试）首次Seek 时会卡住半分钟左右，之后可随意Seek
+				if p.curMusic.Type != Flac {
+					if p.curStreamer, p.curFormat, err = DecodeSong(p.curMusic.Type, p.cacheReader); err != nil {
+						p.Stop()
+					}
+				}
+				
+
 			}(ctx, p.cacheWriter, resp.Body)
 
 			if err = utils.WaitForNBytes(256, p.cacheReader, time.Millisecond*100, 50); err != nil {
@@ -210,6 +218,10 @@ func (p *beepPlayer) TimeChan() <-chan time.Duration {
 }
 
 func (p *beepPlayer) Seek(duration time.Duration) {
+	// FIXME: FLAC格式 暂时禁用跳转
+	if p.curMusic.Type == Flac{
+		return
+	}
 	if p.state == Playing || p.state == Paused {
 
 		speaker.Lock()
